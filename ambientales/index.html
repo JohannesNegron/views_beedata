@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" href="/images/bee.png" type="image/svg" sizes="16x16">
+	<script src="/PapaParse/papaparse.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://code.highcharts.com/stock/highstock.js"></script>
+	<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+	<title>DATOS DE COLMENAS</title>
+</head>
+<body>
+	<div id="container" style="overflow-y:auto; overflow-x:hidden; position: absolute;  top:0px; bottom:0; width:95%; "></div>
+	<script>
+		var _URL1 = "/ambientales_CCBA_1.csv";
+		var URL2 = "/ambientales_CCBA_2.csv";
+		var URL_LIST = [
+		"/datos-veterinaria.csv",
+		"/ambientales_CCBA_1.csv",
+		"/ambientales_CCBA_2.csv",
+		"/ambientales_CCBA_3.csv",
+		"/ambientales_CCBA_4.csv",
+		"/ambientales_CCBA_5.csv"
+		];
+		var graficar = (function(data){
+			Highcharts.stockChart('container', {
+				chart: {
+					zoomType: 'x,y'
+				},
+				rangeSelector: {
+					selected: 1
+				},
+				title: {
+					text: 'AAPL Stock Price'
+				},
+				series: data
+			});
+		});
+		//9992700016
+
+		function order(datos){
+			var data = [];
+			var variables = [
+			"EXT-TEMPERATURE",
+			"TEMP-EXT",
+			"TEMP-EXT"
+			];
+			console.log("datos");
+			console.log(datos);
+			for(var i = 0; i < 1; i++){
+				data.push({name : URL_LIST[i], data : []});
+				for(var j = 0; j < datos[i].length - 1; j++){
+					var auxArray = new Array();
+					var datetime = new Date(datos[i][j]['DATE']+" "+datos[i][j]['TIME']);
+					auxArray.push(datetime.getTime());
+					auxArray.push(datos[i][j]['EXT-TEMPERATURE']);
+					data[i]['data'].push(auxArray);
+				}
+			}
+			for(var i = 1; i < datos.length; i++){
+				data.push({name : URL_LIST[i], data : []});
+				for(var j = 0; j < datos[i].length - 1; j++){
+					var auxArray = new Array();
+					var datetime = new Date(datos[i][j]['Fechas']);
+					auxArray.push(datetime.getTime());
+					auxArray.push(datos[i][j]['TEMP-EXT']);
+					data[i]['data'].push(auxArray);
+				}
+			}
+			console.log(data);
+			graficar(data);
+		}
+
+		readAllList(URL_LIST, 0, []);
+		function readAllList(arraylist, index, arregloResults) {
+			Papa.parse(arraylist[index], {
+				header: true,
+				download: true,
+				dynamicTyping: true,
+				complete: function(results1) {
+					arregloResults.push(results1.data);
+					if(arraylist.length-1 == index){
+						console.log(arregloResults);
+						order(arregloResults);
+					}else{
+						readAllList(arraylist, index+1, arregloResults);
+					}
+				}
+			});	
+		}
+	</script>
+</body>
+</html>

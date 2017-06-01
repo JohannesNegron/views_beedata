@@ -1,98 +1,70 @@
-//var _URL = "http://localhost/direccion_del_csv";
-var _URL1 = "torneo.csv";//Escribir la ruta del archivo dentro del servidor
-var graficar = (function(data, ejeX, ejeY){
+var _URL1 = "ResultadosTemperatura29-05Abril.csv";//Escribir la ruta del archivo dentro del servidor
+var graficar = (function(data){
     Highcharts.chart('container', {
+        chart: {
+            type: 'spline',
+            zoomType: 'x, y'
+            },
+        title: {
+            text: 'ResultadosTemperatura29-05Abril.csv'
+        },
 
-    chart: {
-        type: 'heatmap',
-        marginTop: 40,
-        marginBottom: 80,
-        plotBorderWidth: 1
-    },
+        subtitle: {
+            text: 'FACULTAD DE VETERINARIA'
+        },
 
-
-    title: {
-        text: 'TORNEO PADEL'
-    },
-
-    xAxis: {
-        categories: ejeX
-    },
-
-    yAxis: {
-        categories: ejeY,
-        title: null
-    },
-
-    colorAxis: {
-        min: 0,
-        minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[0]
-    },
-
-    legend: {
-        align: 'right',
-        layout: 'vertical',
-        margin: 0,
-        verticalAlign: 'top',
-        y: 25,
-        symbolHeight: 500
-    },
-
-    tooltip: {
-        formatter: function () {
-            return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
-                this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>';
-        }
-    },
-
-    series: [{
-        name: 'Sales per employee',
-        borderWidth: 1,
-        data: data,
-        dataLabels: {
-            enabled: true,
-            color: '#000000'
-        }
-    }]
-});
+        yAxis: {
+            title: {
+                text: 'Temperature'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        series: data
+    });
 });
 
 function order(datos){
-    var xAxis = [];
-    var yAxis = [];
-    var data = [];
-    /*____________________*/
-    console.log(datos);
-    var int = 0;
-    /*Definiendo xAxis*/
-    for(var i in datos[0]){
-        if(i != "" & i != "Rival"){
-            xAxis[int] = i;
-            int++;
-            console.log(i);
+    var data = [
+        {
+            name : "Ambiental",
+            data : []
+        },
+        {
+            name : "DataLogger1",
+            data : []
+        },
+        {
+            name : "DataLogger2",
+            data : []
+        },
+        {
+            name : "DataLogger3",
+            data : []
+        },
+        {
+            name : "DataLogger4",
+            data : []
+        },
+        {
+            name : "DataLogger5",
+            data : []
         }
-    }
-    /*Definiendo yAxis*/
-    int = 0;
-    for(var i in datos){
-        yAxis[int] = datos[i]["Rival"];
-        int++;
-    }
-    /*Definiendo los datos*/
+    ];
 
-    
-    for(var i = 0; i < yAxis.length; i++){
-        for(var j in xAxis){
-            var aux = new Array(parseInt(j), i, datos[i][xAxis[j]]);
-            console.log(aux);
-            data.push(aux);
-        }
+    for(var i = 0; i < datos.length; i++){
+        (data[0]['data']).push(parseFloat(datos[i]['Ambiental']));
+        (data[1]['data']).push(parseFloat(datos[i]['DataLogger1']));
+        (data[2]['data']).push(parseFloat(datos[i]['DataLogger2']));
+        (data[3]['data']).push(parseFloat(datos[i]['DataLogger3']));
+        (data[4]['data']).push(parseFloat(datos[i]['DataLogger4']));
+        (data[5]['data']).push(parseFloat(datos[i]['DataLogger5']));
     }
-    //console.log(yAxis);
-    //console.log(xAxis);
-    //console.log(data);
-    graficar(data, xAxis, yAxis);
+    console.log(data);
+    graficar(data);
 }
 Papa.parse(_URL1, {
 	header: true,
